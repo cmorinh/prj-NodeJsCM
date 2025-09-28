@@ -47,7 +47,7 @@ const AddProduct = async function(title, price, category) {
     }    
     catch (error)
     {
-        console.error("Ocurrio un error, por favor verifique los datos ingresado. Error:", error);
+        console.error("Ocurrio un error al intentar crear un producto. Error:", error);
     }
     finally        
     {
@@ -59,7 +59,11 @@ const AddProduct = async function(title, price, category) {
 const DeleteProduct = async function(product) {
     try
     {
-        const reponse = await fetch(`https://fakestoreapi.com/${product.trim()}`);
+        const option = {
+            method: 'DELETE'
+        };
+
+        const reponse = await fetch(`https://fakestoreapi.com/${product.trim()}`, option);
 
         if(reponse.status === 200) {
             console.log("Producto eliminado");
@@ -69,7 +73,7 @@ const DeleteProduct = async function(product) {
     }  
     catch (error)
     {
-        console.error("Ocurrio un error, por favor verifique los datos ingresado. Error:", error);
+        console.error("Ocurrio un error al intentar eliminar el producto. Error:", error);
     }
     finally        
     {
