@@ -1,35 +1,37 @@
 //RETURN ALL PRODUCTS: https://fakestoreapi.com/products
 //RETURN A SINGLE PRODUCT: https://fakestoreapi.com/products/1
 const GetProduct = async function(product) {
-    try
-    {
-        const reponse = await fetch(`https://fakestoreapi.com/${product.trim()}`);
-        const data = await reponse.json();
-
-        if(product.includes("/")) {
-            console.log("Producto obtenido: ");
-            console.log(data);
-        }else {
-            console.log("Productos obtenidos: ");
-            data.forEach(item => {
-                console.log(item);
-            });
-        }    
-    }  
-    catch (error)
-    {
-        console.error("Producto no existe");
+    if (!product) {
+        console.error("Debes especificar la ruta del producto (ejemplo: 'products' o 'products/1').");
+        return;
     }
-    finally        
-    {
+    
+    try {
+        const response = await fetch(`https://fakestoreapi.com/${product.trim()}`);
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+            console.log("Productos obtenidos:");
+            data.forEach(item => console.log(item));
+        } else {
+            console.log("Producto obtenido:");
+            console.log(data);
+        }  
+    } catch (error) {
+        console.error("Error al obtener producto:", error);
+    } finally {
         console.log("Proceso terminado");
     }   
 }  
 
 //CREATE A PRODUCT: https://fakestoreapi.com/products
 const AddProduct = async function(title, price, category) {
-    try
-    {
+    if (!title || !price || !category) {
+        console.error("Debes especificar título, precio y categoría.");
+        return;
+    }
+    
+    try {
         const option = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -44,21 +46,21 @@ const AddProduct = async function(title, price, category) {
         } else {
             console.log("Producto no agregado");
         }           
-    }    
-    catch (error)
-    {
+    } catch (error) {
         console.error("Ocurrio un error al intentar crear un producto. Error:", error);
-    }
-    finally        
-    {
+    } finally {
         console.log("Proceso terminado");
     }   
 }  
 
 //DELETE A PRODUCT: https://fakestoreapi.com/products/1
 const DeleteProduct = async function(product) {
-    try
-    {
+    if (!product) {
+        console.error("Debes especificar la ruta del producto a eliminar (ejemplo: 'products/1').");
+        return;
+    }
+
+    try {
         const option = {
             method: 'DELETE'
         };
@@ -70,30 +72,30 @@ const DeleteProduct = async function(product) {
         }else {
             console.log("Producto no existe");
         }
-    }  
-    catch (error)
-    {
+    } catch (error) {
         console.error("Ocurrio un error al intentar eliminar el producto. Error:", error);
-    }
-    finally        
-    {
+    } finally {
         console.log("Proceso terminado");
     }   
 }  
 
 const args = process.argv.slice(2);
 
-switch (args[0].toUpperCase()) {
-    case "GET":
-        GetProduct(args[1]);
-        break;
-    case "POST":
-        AddProduct(args[1], args[2], args[3]);        
-        break;   
-    case "DELETE":
-        DeleteProduct(args[1]);
-        break;
-    default:
-        console.log("Operación no soportada");
-        break;
+if (!args[0]) {
+    console.log("Debes especificar una operación: GET, POST o DELETE");
+} else {
+    switch (args[0].toUpperCase()) {
+        case "GET":
+            await GetProduct(args[1]);
+            break;
+        case "POST":
+            await AddProduct(args[1], args[2], args[3]);        
+            break;   
+        case "DELETE":
+            await DeleteProduct(args[1]);
+            break;
+        default:
+            console.log("Operación no soportada");
+            break;
+    }
 }
